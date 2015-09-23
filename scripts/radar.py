@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as pl
 import json
 import sys
+import os
 
 # load the data
 dataString = ''
@@ -74,4 +75,6 @@ for d in data:
         color="#76b657",
         label="All Other"
     )
-    pl.savefig('../graphics/radar_chart_' + d['donor'] + '.png', bbox_inches='tight')
+    pl.savefig(
+        os.path.dirname(os.path.realpath(__file__)) +
+        '/../graphics/radar_chart_' + d['donor'] + '.png', bbox_inches='tight')

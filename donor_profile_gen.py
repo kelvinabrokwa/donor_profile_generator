@@ -150,10 +150,10 @@ def drawHeader(canvas, donor):
 donor_dirs = get_immediate_subdirectories("donors")
 
 for donor in donor_dirs:
-    canvas = canvas.Canvas("donors/" + donor + "/donor_profile.pdf", pagesize=letter)
-    canvas.setLineWidth(.3)
-    canvas.setFont('Open Sans', 12)
+    c = canvas.Canvas("donors/" + donor + "/donor_profile.pdf", pagesize=letter)
+    c.setLineWidth(.3)
+    c.setFont('Open Sans', 12)
 
-    canvas = drawHeader(canvas, donor)
+    c = drawHeader(c, donor)
 
-    canvas.save()
+    c.save()
