@@ -69,6 +69,8 @@ for image in $dir/charts/*; do
 
 done
 
+rm -rf $dir/charts
+
 echo 'Creating PDFs...'
 python $dir/donor_profile_gen.py
 echo 'DONE!'

@@ -1,4 +1,5 @@
 import os
+from multiprocessing import Process
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
@@ -23,6 +24,8 @@ def get_immediate_subdirectories(a_dir):
 ################################
 # Function HeaderOverview - header for overview page
 def drawHeader(canvas, donor):
+    donor_name = donor.replace('_', ' ')
+
     canvas.saveState()
     headboxh = 80
     headboxx = 20
@@ -60,9 +63,9 @@ def drawHeader(canvas, donor):
     canvas.saveState()
     canvas.setFillColor(colors.white)
     canvas.setFont('Open Sans', 18)
-    donor_year = donor + " 2015"
+    donor_year = donor_name + " 2015"
     textWidth = stringWidth(donor_year, "Open Sans", 18)
-    canvas.drawString(headboxx + headboxw - (textWidth + 10), headboxy + .30 * headboxh, donor + " 2015")
+    canvas.drawString(headboxx + headboxw - (textWidth + 10), headboxy + .30 * headboxh, donor_name + " 2015")
 
     # add logo
     logo = ImageReader(logouri)
@@ -72,7 +75,7 @@ def drawHeader(canvas, donor):
     # add map
     canvas.setFont('Open Sans', 12)
     canvas.setFillColor(colors.black)
-    title_str = "Distribution of " + donor + "'s Official Development Assistance(ODA) 2004-2013"
+    title_str = "Distribution of " + donor_name + "'s Official Development Assistance(ODA) 2004-2013"
     textWidth = stringWidth(title_str, "Open Sans", 12)
     pl = (PAGEWIDTH / 2) - (textWidth / 2)
     canvas.drawString(pl, 650, title_str)
@@ -82,7 +85,7 @@ def drawHeader(canvas, donor):
     # add influence chart
     canvas.setFont('Open Sans', 12)
     canvas.setFillColor(colors.black)
-    title_str = "Three Aspects of " + donor + "'s Performance in the Countries It Influences Most"
+    title_str = "Three Aspects of " + donor_name + "'s Performance in the Countries It Influences Most"
     textWidth = stringWidth(title_str, "Open Sans", 12)
     pl = (PAGEWIDTH / 2) - (textWidth / 2)
     canvas.drawString(pl, 320, title_str)
@@ -107,14 +110,14 @@ def drawHeader(canvas, donor):
     # add advice comp chart
     canvas.setFont('Open Sans', 12)
     canvas.setFillColor(colors.black)
-    title_str = "Usefulness of " + donor + "'s Advice Compared to the Average"
+    title_str = "Usefulness of " + donor_name + "'s Advice Compared to the Average"
     textWidth = stringWidth(title_str, "Open Sans", 12)
     pl = (PAGEWIDTH / 3) - (textWidth / 2)
     canvas.drawString(pl, 500, title_str)
     canvas.setFont('Open Sans', 6)
     key_str1 = "All Other Development Partners"
     canvas.drawString(pl+60,487, key_str1)
-    canvas.drawString(pl+210,487, donor)
+    canvas.drawString(pl+210,487, donor_name)
     canvas.setStrokeColorRGB(.461, .711, .340)
     canvas.line(pl+30, 489, pl+50, 489)
     canvas.setStrokeColorRGB(.890, .118, .118)
@@ -125,7 +128,7 @@ def drawHeader(canvas, donor):
     # add comp2 chart
     canvas.setFont('Open Sans', 12)
     canvas.setFillColor(colors.black)
-    title_str = "Three Dimensions of  " + donor + "'s Performance Compared to Other Development Partners"
+    title_str = "Three Dimensions of  " + donor_name + "'s Performance Compared to Other Development Partners"
     textWidth = stringWidth(title_str, "Open Sans", 12)
     pl = (PAGEWIDTH / 2) - (textWidth / 2)
     canvas.drawString(pl, 250, title_str)
@@ -149,7 +152,7 @@ def drawHeader(canvas, donor):
 
 donor_dirs = get_immediate_subdirectories("donors")
 
-for donor in donor_dirs:
+def writePdf(donor):
     c = canvas.Canvas("donors/" + donor + "/donor_profile.pdf", pagesize=letter)
     c.setLineWidth(.3)
     c.setFont('Open Sans', 12)
@@ -157,3 +160,9 @@ for donor in donor_dirs:
     c = drawHeader(c, donor)
 
     c.save()
+
+jobs = []
+for donor in donor_dirs:
+    p = Process(target=writePdf, args=(donor,))
+    jobs.append(p)
+    p.start()
