@@ -15,15 +15,9 @@ echo  'Creating quartile charts..'
 node $dir/scripts/quartile_viz.js
 
 echo 'Converting to PNG...'
-for image in $dir/graphics/*; do
-  if [[ $image == *"svg"* ]];
-  then
-    echo 'converting -> '$(basename $image);
-    convert -density 500 $image $dir/charts/`echo $(basename $image) | sed s/svg$/png/`;
-  else
-    mv $dir/$image $dir/charts;
-  fi
-done
+
+parallel --verbose 'convert -density 500 '$dir'/graphics/{} '$dir'/charts/`echo $(basename {}) | sed s/svg$/png/`' ::: $(ls $dir/graphics | grep '\.svg$');
+cp $dir/graphics/*.png $dir/charts/;
 
 rm -rf $dir/graphics
 
@@ -35,45 +29,41 @@ for image in $dir/charts/*; do
     mkdir $dir/donors/$donor;
   fi
 
-  if [ -e $dir'/assets/maps/'$donor'_map.png' ];
+  if [ -e $dir/assets/maps/$donor'_map.png' ];
   then
-    cp $dir'/assets/maps/'$donor'_map.png' $dir/donors/$donor/map.png
+    cp $dir/assets/maps/$donor'_map.png' $dir/donors/$donor/map.png
+  else
+    cp $dir/assets/images/placeholder.png $dir/donors/$donor/map.png
   fi
 
   if [ -e $dir'/charts/bar_chart_'$donor'.png' ];
   then
     cp $dir'/charts/bar_chart_'$donor'.png' $dir/donors/$donor/influence.png;
   else
-    cp $dir'/templates/influence.png' $dir/donors/$donor/influence.png;
+    cp $dir/assets/images/placeholder.png $dir/donors/$donor/influence.png;
   fi
 
   if [ -e $dir'/charts/bubble_chart_'$donor'.png' ];
   then
     cp $dir'/charts/bubble_chart_'$donor'.png' $dir/donors/$donor/advice.png;
   else
-    cp $dir'/templates/advice.png' $dir/donors/$donor/advice.png;
+    cp $dir/assets/images/placeholder.png $dir/donors/$donor/advice.png;
   fi
 
   if [ -e $dir'/charts/quartile_chart_'$donor'.png' ];
   then
     cp $dir'/charts/quartile_chart_'$donor'.png' $dir/donors/$donor/comp2.png;
   else
-    cp $dir'/templates/comp2.png' $dir/donors/$donor/comp2.png;
+    cp $dir/assets/images/placeholder.png $dir/donors/$donor/comp2.png;
   fi
 
   if [ -e $dir'/charts/radar_chart_'$donor'.png' ];
   then
     cp $dir'/charts/radar_chart_'$donor'.png' $dir/donors/$donor/comp.png;
   else
-    echo 'radar chart does not exists';
-    cp $dir'/templates/comp.png' $dir/donors/$donor/comp.png;
+    cp $dir/assets/images/placeholder.png $dir/donors/$donor/comp.png;
   fi
 
-done
-
-# REMEMBER TO REMOVE THIS
-for donor in donors/*; do
-  cp $dir'/templates/map.png' $donor;
 done
 
 echo 'Creating PDFs...'
