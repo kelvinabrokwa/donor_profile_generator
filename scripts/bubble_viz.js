@@ -1,75 +1,17 @@
 var fs = require('fs');
 var path = require('path');
-var parse = require('csv-parse');
 var extend = require('xtend');
 var jsdom = require('jsdom');
 var xmlserializer = require('xmlserializer');
 
-var dataCSV = fs.readFileSync(path.join(__dirname, 'data/data.csv'), { encoding: 'utf-8' });
-var averageCSV = fs.readFileSync(path.join(__dirname, 'data/averages.csv'), { encoding: 'utf-8' });
+var data = JSON.parse(fs.readFileSync(
+      path.join(__dirname, 'parsed_data', 'data.json'), { encoding: 'utf-8' }));
+var averages = JSON.parse(fs.readFileSync(
+      path.join(__dirname, 'parsed_data', 'average.json'), { encoding: 'utf-8' }));
 
-parseData(dataCSV);
+var bubbleData = generateBubbleChartData(data, averages);
 
-function parseData(csv) {
-  var data = [];
-  var header = true;
-  var row, record, head;
-
-  var dataCSVParser = parse();
-
-  dataCSVParser.on('readable', function() {
-    while (record = dataCSVParser.read()) {
-      if (!header) {
-        row = {};
-        for (var i = 0; i < record.length; i++) {
-          row[head[i]] = record[i];
-        }
-        data.push(row);
-      } else {
-        head = record;
-        header = false;
-      }
-    }
-  });
-
-  dataCSVParser.on('finish', function() {
-    parseCSVAverages(averageCSV, data);
-  });
-
-  dataCSVParser.write(csv);
-  dataCSVParser.end();
-}
-
-function parseCSVAverages(csv, data) {
-  var averages = [];
-  var header = true;
-  var record, head;
-
-  var averageCSVParser = parse();
-
-  averageCSVParser.on('readable', function() {
-    while (record = averageCSVParser.read()) {
-      if (!header) {
-        var row = {};
-        for (var i = 0; i < record.length; i++) {
-          row[head[i]] = record[i];
-        }
-        averages.push(row);
-      } else {
-        head = record;
-        header = false;
-      }
-    }
-  });
-
-  averageCSVParser.on('finish', function() {
-    var bubbleData = generateBubbleChartData(data, averages);
-    writeChartsToDisk(bubbleData);
-  });
-
-  averageCSVParser.write(csv);
-  averageCSVParser.end();
-}
+writeChartsToDisk(bubbleData);
 
 function generateBubbleChartData(rawData, averageData) {
   var averageBubbleData = {
@@ -177,9 +119,9 @@ function flatten(d) {
   return flattened;
 }
 
-function writeChartsToDisk(bubbleData, i) {
+function writeChartsToDisk(bData, i) {
   if (!i) i = 0;
-  var donor = bubbleData[i].filter(function(d) {
+  var donor = bData[i].filter(function(d) {
     return ['multi', 'dac', 'nonDac'].indexOf(d.donor) < 0;
   })[0].donor;
   jsdom.env({
@@ -188,18 +130,18 @@ function writeChartsToDisk(bubbleData, i) {
     scripts: [ 'http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js' ],
     done: function(err, window) {
       if (err) throw err;
-      var svg = getChart(window, bubbleData[i]);
+      var svg = getChart(window, bData[i]);
       fs.writeFileSync(
         path.join(__dirname, '..', 'graphics', 'bubble_chart_' + donor + '.svg'),
         xmlserializer.serializeToString(svg),
         { encoding: 'utf-8' }
       );
-      if (++i < bubbleData.length) writeChartsToDisk(bubbleData, i);
+      if (++i < bData.length) writeChartsToDisk(bData, i);
     }
   });
 }
 
-function getChart(window, data) {
+function getChart(window, _data) {
   var d3 = window.d3;
 
   var PX_RATIO = 4 / 3;
@@ -223,22 +165,22 @@ function getChart(window, data) {
 
   var x = d3.scale.linear()
     .domain([
-      d3.min(data, function(d) { return d.oda; }),
-      d3.max(data, function(d) { return d.oda; })
+      d3.min(_data, function(d) { return d.oda; }),
+      d3.max(_data, function(d) { return d.oda; })
     ])
     .range([0, width]);
 
   var y = d3.scale.linear()
     .domain([
-      d3.min(data, function(d) { return d.q14; }),
-      d3.max(data, function(d) { return d.q14; })
+      d3.min(_data, function(d) { return d.q14; }),
+      d3.max(_data, function(d) { return d.q14; })
     ])
     .range([height, 0]);
 
   var scale = d3.scale.linear()
     .domain([
-      d3.min(data, function(d) { return d.q21; }),
-      d3.max(data, function(d) { return d.q21; })
+      d3.min(_data, function(d) { return d.q21; }),
+      d3.max(_data, function(d) { return d.q21; })
     ])
     .range([0, 20]);
 
@@ -277,7 +219,7 @@ function getChart(window, data) {
 
   // circles
   svg.append('g').selectAll('circle')
-    .data(data)
+    .data(_data)
     .enter()
     .insert('circle')
     .attr('opacity', 0.8)
@@ -306,7 +248,7 @@ function getChart(window, data) {
 
   // bubble labels
   svg.append('g').selectAll('.labels')
-    .data(data)
+    .data(_data)
     .enter()
     .append('text')
       .text(function(d) { return d.donor.replace(/_/g, ' '); })
@@ -323,4 +265,3 @@ function getChart(window, data) {
 
   return window.document.getElementsByTagName('svg')[0];
 }
-

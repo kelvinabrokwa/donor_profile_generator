@@ -1,72 +1,15 @@
 var fs = require('fs');
 var path = require('path');
 var jsdom = require('jsdom');
-var parse = require('csv-parse');
 var R = require('ramda');
 var xmlserializer = require('xmlserializer');
 
-var dataCSV = fs.readFileSync(path.join(__dirname, 'data/data.csv'), { encoding: 'utf-8' });
-var countryCSV = fs.readFileSync(path.join(__dirname, 'data/country.csv'), { encoding: 'utf-8' });
+var data = JSON.parse(fs.readFileSync(
+      path.join(__dirname, 'parsed_data', 'data.json'), { encoding: 'utf-8' }));
+var countryKeys = JSON.parse(fs.readFileSync(
+      path.join(__dirname, 'parsed_data', 'country.json'), { encoding: 'utf-8' }));
 
-var countryKeys, data;
-
-parseCountries(countryCSV);
-
-function parseCountries(csv) {
-  countryKeys = {};
-  var header = true;
-  var countryCSVParser = parse();
-  var record;
-
-  countryCSVParser.on('readable', function() {
-    while (record = countryCSVParser.read()) {
-      if (!header) {
-        countryKeys[record[0]] = record[3];
-      } else {
-        header = false;
-      }
-    }
-  });
-
-  countryCSVParser.on('finish', function() {
-    parseData(dataCSV);
-  });
-
-  countryCSVParser.write(csv);
-
-  countryCSVParser.end();
-}
-
-function parseData(csv) {
-  data = [];
-  var header = true;
-  var row, record, head;
-
-  var dataCSVParser = parse();
-
-  dataCSVParser.on('readable', function() {
-    while (record = dataCSVParser.read()) {
-      if (!header) {
-        row = {};
-        for (var i = 0; i < record.length; i++) {
-          row[head[i]] = record[i];
-        }
-        data.push(row);
-      } else {
-        head = record;
-        header = false;
-      }
-    }
-  });
-
-  dataCSVParser.on('finish', function() {
-    generateBarChartData(data);
-  });
-
-  dataCSVParser.write(csv);
-
-  dataCSVParser.end();
-}
+generateBarChartData(data);
 
 function generateBarChartData(rawData) {
   var barData = rawData.map(function(donor) {

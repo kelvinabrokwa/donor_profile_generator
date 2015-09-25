@@ -5,6 +5,9 @@ dir=$(dirname $0)
 rm -rf $dir/graphics $dir/charts
 mkdir $dir/graphics $dir/charts
 
+# parse CSV -> JSON
+node $dir/scripts/parse_data.js
+
 echo 'Creating bar charts...'
 node $dir/scripts/bars_viz.js
 echo 'Creating bubble charts...'

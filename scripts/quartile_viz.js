@@ -1,46 +1,16 @@
 var fs = require('fs');
 var path = require('path');
 var jsdom = require('jsdom');
-var parse = require('csv-parse');
 var xmlserializer = require('xmlserializer');
 
-var dataCSV = fs.readFileSync(path.join(__dirname, 'data/data.csv'), { encoding: 'utf-8' });
+var _d = JSON.parse(fs.readFileSync( // eslint-disable-line no-underscore-dangle
+      path.join(__dirname, 'parsed_data', 'data.json'), { encoding: 'utf-8' }));
 
-parseData(dataCSV);
-
-function parseData(csv) {
-  var data = [];
-  var header = true;
-  var row, record, head;
-
-  var dataCSVParser = parse();
-
-  dataCSVParser.on('readable', function() {
-    while (record = dataCSVParser.read()) {
-      if (!header) {
-        row = {};
-        for (var i = 0; i < record.length; i++) {
-          row[head[i]] = record[i];
-        }
-        data.push(row);
-      } else {
-        head = record;
-        header = false;
-      }
-    }
-  });
-
-  dataCSVParser.on('finish', function() {
-    generateChartData(data);
-  });
-
-  dataCSVParser.write(csv);
-
-  dataCSVParser.end();
-}
+var chartData = generateChartData(_d);
+writeChartsToDisk(chartData);
 
 function generateChartData(csv) {
-  var data = csv.map(function(d) {
+  return csv.map(function(d) {
     return {
       donor: d['Name of Donor'],
       data: [
@@ -50,7 +20,6 @@ function generateChartData(csv) {
       ]
     };
   });
-  writeChartsToDisk(data);
 }
 
 function writeChartsToDisk(data, i) {
