@@ -4,7 +4,6 @@ import json
 import sys
 import os
 
-# load the data
 dataString = ''
 for line in sys.stdin:
     dataString += line
@@ -41,7 +40,7 @@ class Radar(object):
         self.ax.plot(angle, values, *args, **kw)
 
 
-titles = ['Economic Policy', 'Governance', 'Social and Environmental Policy']#list("ABCDE")
+titles = ['Economic Policy', 'Governance', 'Social and Environmental Policy']
 
 labels = [
     list('12345'),
@@ -78,3 +77,5 @@ for d in data:
     pl.savefig(
         os.path.dirname(os.path.realpath(__file__)) +
         '/../graphics/radar_chart_' + d['donor'] + '.png', bbox_inches='tight')
+
+    pl.close(fig)

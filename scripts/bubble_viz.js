@@ -217,7 +217,7 @@ function getChart(window, data) {
     .attr('width', width + 2 * margin)
     .attr('height', height + 2 * margin)
     .append('g')
-    .style('font-family', 'Helvetica')
+    .style('font-family', 'Open Sans')
     .style('font-size', '12px')
     .attr('transform', 'translate(' + margin + ',' + margin + ')');
 
@@ -316,7 +316,7 @@ function getChart(window, data) {
 
   d3.selectAll('text')
     .style('fill', '#000')
-    .style('font-family', 'Helvetica')
+    .style('font-family', 'Open Sans')
     .style('font-size', '8')
     .style('font-weight', 'normal')
     .style('stroke', 'none');

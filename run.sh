@@ -16,7 +16,7 @@ node $dir/scripts/quartile_viz.js
 
 echo 'Converting to PNG...'
 
-parallel --verbose 'convert -density 500 '$dir'/graphics/{} '$dir'/charts/`echo $(basename {}) | sed s/svg$/png/`' ::: $(ls $dir/graphics | grep '\.svg$');
+parallel --verbose --timeout 400% 'convert -density 500 '$dir'/graphics/{} '$dir'/charts/`echo $(basename {}) | sed s/svg$/png/`' ::: $(ls $dir/graphics | grep '\.svg$');
 cp $dir/graphics/*.png $dir/charts/;
 
 rm -rf $dir/graphics
@@ -33,35 +33,35 @@ for image in $dir/charts/*; do
   then
     cp $dir/assets/maps/$donor'_map.png' $dir/donors/$donor/map.png
   else
-    cp $dir/assets/images/placeholder.png $dir/donors/$donor/map.png
+    cp $dir/assets/images/placeholder.jpg $dir/donors/$donor/map.png
   fi
 
   if [ -e $dir'/charts/bar_chart_'$donor'.png' ];
   then
     cp $dir'/charts/bar_chart_'$donor'.png' $dir/donors/$donor/influence.png;
   else
-    cp $dir/assets/images/placeholder.png $dir/donors/$donor/influence.png;
+    cp $dir/assets/images/placeholder.jpg $dir/donors/$donor/influence.png;
   fi
 
   if [ -e $dir'/charts/bubble_chart_'$donor'.png' ];
   then
     cp $dir'/charts/bubble_chart_'$donor'.png' $dir/donors/$donor/advice.png;
   else
-    cp $dir/assets/images/placeholder.png $dir/donors/$donor/advice.png;
+    cp $dir/assets/images/placeholder.jpg $dir/donors/$donor/advice.png;
   fi
 
   if [ -e $dir'/charts/quartile_chart_'$donor'.png' ];
   then
     cp $dir'/charts/quartile_chart_'$donor'.png' $dir/donors/$donor/comp2.png;
   else
-    cp $dir/assets/images/placeholder.png $dir/donors/$donor/comp2.png;
+    cp $dir/assets/images/placeholder.jpg $dir/donors/$donor/comp2.png;
   fi
 
   if [ -e $dir'/charts/radar_chart_'$donor'.png' ];
   then
     cp $dir'/charts/radar_chart_'$donor'.png' $dir/donors/$donor/comp.png;
   else
-    cp $dir/assets/images/placeholder.png $dir/donors/$donor/comp.png;
+    cp $dir/assets/images/placeholder.jpg $dir/donors/$donor/comp.png;
   fi
 
 done

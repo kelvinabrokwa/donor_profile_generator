@@ -284,7 +284,7 @@ function getChart(window, _data) {
 
   svg.selectAll('text')
     .style('fill', '#000')
-    .style('font-family', 'Helvetica')
+    .style('font-family', 'Open Sans')
     .style('stroke', 'none');
 
   svg.selectAll('line')

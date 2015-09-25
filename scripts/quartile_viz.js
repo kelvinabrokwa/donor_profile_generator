@@ -202,7 +202,7 @@ function getChart(window, ranks) {
       .attr('y', function(d, i) { return i * 40 * PX_RATIO + (markerH) + 5; });
 
   svg.selectAll('text')
-    .style('font-family', 'Helvetica')
+    .style('font-family', 'Open Sans')
     .style('font-size', '14');
 
   function translation(x, y) {
