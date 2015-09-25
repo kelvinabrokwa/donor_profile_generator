@@ -19,7 +19,7 @@ class Radar(object):
 
         self.n = len(titles)
         self.angles = np.arange(90, 90+360, 360.0/self.n)
-        self.axes = [fig.add_axes(rect, projection="polar", label="axes%d" % i)
+        self.axes = [fig.add_axes(rect, projection='polar', label='axes%d' % i)
                          for i in range(self.n)]
 
         self.ax = self.axes[0]
@@ -27,12 +27,12 @@ class Radar(object):
 
         for ax in self.axes[1:]:
             ax.patch.set_visible(False)
-            ax.grid("off")
+            ax.grid('off')
             ax.xaxis.set_visible(False)
 
         for ax, angle, label in zip(self.axes, self.angles, labels):
             ax.set_rgrids(range(1, 6), angle=angle, labels=label)
-            ax.spines["polar"].set_visible(False)
+            ax.spines['polar'].set_visible(False)
             ax.set_ylim(0, 5)
 
     def plot(self, values, *args, **kw):
@@ -44,13 +44,13 @@ class Radar(object):
 titles = ['Economic Policy', 'Governance', 'Social and Environmental Policy']#list("ABCDE")
 
 labels = [
-    list("12345"),
-    list("12345"),
-    list("12345")
+    list('12345'),
+    list('12345'),
+    list('12345')
 ]
 
 for d in data:
-    fig = pl.figure(figsize=(6, 6))
+    fig = pl.figure(figsize=(13, 8))
 
     radar = Radar(fig, titles, labels)
     radar.plot(
@@ -59,10 +59,10 @@ for d in data:
             float(d['data']['pgc2'] if d['data']['pgc2'] else 0),
             float(d['data']['pgc3'] if d['data']['pgc3'] else 0),
         ],
-        "-",
+        '-',
         lw=2,
-        color="#E31E1E",
-        label="Donor"
+        color='#E31E1E',
+        label='Donor'
     )
     radar.plot(
         [
@@ -70,10 +70,10 @@ for d in data:
             float(d['average']['pgc2'] if d['average']['pgc2'] else 0),
             float(d['average']['pgc3'] if d['average']['pgc3'] else 0),
         ],
-        "-",
+        '-',
         lw=2,
-        color="#76b657",
-        label="All Other"
+        color='#76b657',
+        label='All Other'
     )
     pl.savefig(
         os.path.dirname(os.path.realpath(__file__)) +

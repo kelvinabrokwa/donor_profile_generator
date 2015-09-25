@@ -120,7 +120,7 @@ def drawHeader(canvas, donor):
     canvas.setStrokeColorRGB(.890, .118, .118)
     canvas.line(pl+180, 489, pl+200, 489)
     comp = ImageReader(compuri)
-    canvas.drawImage(comp, 45, 280, 325, 200, mask='auto')
+    canvas.drawImage(comp, 45, 280, 200, 200, mask='auto')
 
     # add comp2 chart
     canvas.setFont('Open Sans', 12)
