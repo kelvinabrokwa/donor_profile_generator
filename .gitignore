@@ -1,0 +1,7 @@
+env
+*.html
+charts
+donors/*
+graphics
+charts
+parsed_data
