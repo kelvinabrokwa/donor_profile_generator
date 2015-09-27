@@ -19,7 +19,8 @@ node $dir/scripts/quartile_viz.js
 
 echo 'Converting to PNG...'
 
-parallel --verbose --timeout 400% 'convert -density 500 '$dir'/graphics/{} '$dir'/charts/`echo $(basename {}) | sed s/svg$/png/`' ::: $(ls $dir/graphics | grep '\.svg$');
+parallel --verbose --timeout 30 'node_modules/.bin/svgexport '$dir'/graphics/{} '$dir'/charts/`echo $(basename {}) | sed s/svg$/png/` 100% 3x' ::: $(ls $dir/graphics | grep '\.svg$');
+
 cp $dir/graphics/*.png $dir/charts/;
 
 rm -rf $dir/graphics
