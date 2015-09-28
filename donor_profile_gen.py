@@ -1,4 +1,5 @@
 import os
+
 from multiprocessing import Process
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont
@@ -19,6 +20,14 @@ pdfmetrics.registerFont(TTFont('Open Sans Bold', 'assets/fonts/fonts-open-sans/O
 def get_immediate_subdirectories(a_dir):
     return [name for name in os.listdir(a_dir)
             if os.path.isdir(os.path.join(a_dir, name))]
+
+
+# draw a multiline string
+def drawMultiString( c, x, y, s ):
+    for ln in s.split('\n'):
+        c.drawString( x, y, ln )
+        y -= c._leading
+    return c
 
 
 ################################
@@ -75,12 +84,16 @@ def drawHeader(canvas, donor):
     # add map
     canvas.setFont('Open Sans', 12)
     canvas.setFillColor(colors.black)
-    title_str = "Distribution of " + donor_name + "'s Official Development Assistance(ODA) 2004-2013"
+    title_str = "Distribution of " + donor_name + "'s"
     textWidth = stringWidth(title_str, "Open Sans", 12)
     pl = (PAGEWIDTH / 2) - (textWidth / 2)
     canvas.drawString(pl, 650, title_str)
+    title_str = "Official Development Assistance(ODA) 2004-2013"
+    textWidth = stringWidth(title_str, "Open Sans", 12)
+    pl = (PAGEWIDTH / 2) - (textWidth / 2)
+    canvas.drawString(pl, 638, title_str)
     map = ImageReader(mapuri)
-    canvas.drawImage(map, 75, 320, 450, 350, mask='auto')
+    canvas.drawImage(map, 75, 305, 450, 350, mask='auto')
 
     # add influence chart
     canvas.setFont('Open Sans', 12)
@@ -88,7 +101,7 @@ def drawHeader(canvas, donor):
     title_str = "Three Aspects of " + donor_name + "'s Performance in the Countries It Influences Most"
     textWidth = stringWidth(title_str, "Open Sans", 12)
     pl = (PAGEWIDTH / 2) - (textWidth / 2)
-    canvas.drawString(pl, 320, title_str)
+    canvas.drawString(pl, 310, title_str)
     influence = ImageReader(influenceuri)
     canvas.drawImage(influence, 80, 20, 450, 275, mask='auto')
 
@@ -124,6 +137,14 @@ def drawHeader(canvas, donor):
     canvas.line(pl+180, 489, pl+200, 489)
     comp = ImageReader(compuri)
     canvas.drawImage(comp, 45, 280, 225, 200, mask='auto')
+
+    # add design reforms list
+
+    canvas.setFont('Open Sans', 12)
+    canvas.setFillColor(colors.black)
+    title_str = donor_name+ "'s Influence in Designing\nReforms for Different Problem Types"
+    pl = 400
+    canvas = drawMultiString(canvas, pl, 500, title_str)
 
     # add comp2 chart
     canvas.setFont('Open Sans', 12)
