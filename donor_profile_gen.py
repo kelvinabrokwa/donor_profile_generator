@@ -123,7 +123,7 @@ def drawHeader(canvas, donor):
     canvas.setStrokeColorRGB(.890, .118, .118)
     canvas.line(pl+180, 489, pl+200, 489)
     comp = ImageReader(compuri)
-    canvas.drawImage(comp, 45, 280, 200, 200, mask='auto')
+    canvas.drawImage(comp, 45, 280, 225, 200, mask='auto')
 
     # add comp2 chart
     canvas.setFont('Open Sans', 12)
@@ -133,7 +133,7 @@ def drawHeader(canvas, donor):
     pl = (PAGEWIDTH / 2) - (textWidth / 2)
     canvas.drawString(pl, 250, title_str)
     comp2 = ImageReader(comp2uri)
-    canvas.drawImage(comp2, 45, 90, 525, 150, mask='auto')
+    canvas.drawImage(comp2, 45, 110, 525, 125, mask='auto')
 
 
     # blue footer
