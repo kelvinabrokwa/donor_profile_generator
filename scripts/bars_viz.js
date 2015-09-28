@@ -206,7 +206,7 @@ function getChart(window, _data) {
     .enter()
     .append('text')
       .text(function(d) { return d.q14; })
-        .attr('x', function(d) { return (w / 2) - xScale(d.q14) - margin.middle - 25; })
+        .attr('x', function(d) { return (w / 2) - xScale(d.q14) - margin.middle - 40; })
         .attr('y', function(d) { return yScale(d.group) + 30; });
 
   svg.append('g')
