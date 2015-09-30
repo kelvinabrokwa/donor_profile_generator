@@ -9,9 +9,11 @@ var data = JSON.parse(fs.readFileSync(
 var averages = JSON.parse(fs.readFileSync(
       path.join(__dirname, 'parsed_data', 'average.json'), { encoding: 'utf-8' }));
 
+
 var bubbleData = generateBubbleChartData(data, averages);
 
 writeChartsToDisk(bubbleData);
+
 
 function generateBubbleChartData(rawData, averageData) {
   var averageBubbleData = {
