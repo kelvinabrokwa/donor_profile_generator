@@ -106,7 +106,7 @@ function getChart(window, ranks) {
     .enter()
     .append('text')
       .text(function(d) { return d; })
-      .attr('x', 0)
+      .attr('x', 10)
       .attr('y', function(d, i) { return i * 45 * PX_RATIO; })
       .call(wrap);
 
@@ -117,7 +117,7 @@ function getChart(window, ranks) {
     .enter()
     .append('text')
       .text(function(d) { return d; })
-      .attr('y', 0)
+      .attr('y', -2)
       .attr('x', function(d, i) {
         switch (i) {
           case 0:
@@ -125,7 +125,7 @@ function getChart(window, ranks) {
           case 1:
             return qAreaW / 2;
           case 2:
-            return qAreaW;
+            return qAreaW - 110;
         }
       })
       .attr('text-anchor', function(d, i) {
@@ -145,7 +145,7 @@ function getChart(window, ranks) {
     .enter()
     .append('rect')
       .attr('x', (qAreaW - markerW) / 2)
-      .attr('y', function(d) { return d * 40 * PX_RATIO; })
+      .attr('y', function(d) { return d * 41 * PX_RATIO; })
       .attr('width', markerW)
       .attr('height', markerH)
       .attr('fill', '#A9A9A9');
@@ -156,7 +156,7 @@ function getChart(window, ranks) {
     .enter()
     .append('rect')
       .attr('x', function(d) { return (d / numberOfDonors) * qAreaW; })
-      .attr('y', function(d, i) { return i * 40 * PX_RATIO; })
+      .attr('y', function(d, i) { return i * 41 * PX_RATIO; })
       .attr('width', markerW)
       .attr('height', markerH)
       .attr('fill', '#000');
@@ -167,11 +167,11 @@ function getChart(window, ranks) {
     .enter()
     .append('text')
       .text(ranks.donor.replace('_', ' '))
-      .attr('x', function(d) { return (d / numberOfDonors) * qAreaW + 7; })
+      .attr('x', function(d) { return (d / numberOfDonors) * qAreaW + 15; })
       .attr('y', function(d, i) { return i * 40 * PX_RATIO + (markerH) + 5; });
 
   svg.selectAll('text')
-    .style('font-family', 'Open Sans')
+    .style('font-family', 'Open Sans, sans-serif')
     .style('font-size', '14');
 
   function translation(x, y) {

@@ -22,7 +22,7 @@ class Radar(object):
                          for i in range(self.n)]
 
         self.ax = self.axes[0]
-        self.ax.set_thetagrids(self.angles, labels=titles, fontsize=14)
+        self.ax.set_thetagrids(self.angles, labels=titles, fontsize=20)
 
         for ax in self.axes[1:]:
             ax.patch.set_visible(False)

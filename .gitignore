@@ -2,6 +2,7 @@ env
 *.html
 charts
 donors/*
+node_modules/*
 graphics
 charts
 parsed_data
