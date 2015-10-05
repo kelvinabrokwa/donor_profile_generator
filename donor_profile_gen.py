@@ -1,4 +1,9 @@
 import os
+import json
+import sys
+import pprint
+import copy
+import math
 
 from multiprocessing import Process
 from reportlab.pdfgen import canvas
@@ -8,6 +13,8 @@ from reportlab.lib import colors
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.pagesizes import letter
+from reportlab.platypus import Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 PAGEWIDTH, PAGEHEIGHT = letter
 
@@ -28,6 +35,13 @@ def drawMultiString( c, x, y, s ):
         c.drawString( x, y, ln )
         y -= c._leading
     return c
+
+# read
+f = open(os.path.dirname(os.path.realpath(__file__)) + "/scripts/parsed_data/data.json", "r")
+data = json.load(f)
+
+f = open(os.path.dirname(os.path.realpath(__file__)) + "/scripts/parsed_data/problem_type.json", "r")
+problem_type = json.load(f)
 
 
 ################################
@@ -125,26 +139,29 @@ def drawHeader(canvas, donor):
     canvas.setFillColor(colors.black)
     title_str = "Usefulness of " + donor_name + "'s Advice Compared to the Average"
     textWidth = stringWidth(title_str, "Open Sans", 12)
-    pl = (PAGEWIDTH / 3) - (textWidth / 2)
+    pl = (PAGEWIDTH / 2) - (textWidth / 2)
     canvas.drawString(pl, 500, title_str)
     canvas.setFont('Open Sans', 6)
     key_str1 = "All Other Development Partners"
-    canvas.drawString(pl+60,487, key_str1)
-    canvas.drawString(pl+210,487, donor_name)
+    #canvas.drawString(pl+60,487, key_str1)
+    canvas.drawString(210,487, key_str1)
+    #canvas.drawString(pl+210,487, donor_name)
+    canvas.drawString(360,487, donor_name)
     canvas.setStrokeColorRGB(.461, .711, .340)
-    canvas.line(pl+30, 489, pl+50, 489)
+    canvas.line(170, 489, 200, 489)
     canvas.setStrokeColorRGB(.890, .118, .118)
-    canvas.line(pl+180, 489, pl+200, 489)
+    canvas.line(320, 489, 350, 489)
     comp = ImageReader(compuri)
-    canvas.drawImage(comp, 45, 280, 225, 200, mask='auto')
+    #canvas.drawImage(comp, 45, 280, 225, 200, mask='auto')
+    canvas.drawImage(comp, 45 + 155, 280, 225, 200, mask='auto')
 
     # add design reforms list
 
-    canvas.setFont('Open Sans', 12)
-    canvas.setFillColor(colors.black)
-    title_str = donor_name+ "'s Influence in Designing\nReforms for Different Problem Types"
-    pl = 400
-    canvas = drawMultiString(canvas, pl, 500, title_str)
+    #canvas.setFont('Open Sans', 12)
+    #canvas.setFillColor(colors.black)
+    #title_str = donor_name+ "'s Influence in Designing\nReforms for Different Problem Types"
+    #pl = 400
+    #canvas = drawMultiString(canvas, pl, 500, title_str)
 
     # add comp2 chart
     canvas.setFont('Open Sans', 12)
@@ -168,6 +185,50 @@ def drawHeader(canvas, donor):
     logo = ImageReader(logouri)
     canvas.drawImage(logo, 475, 20, 105, 65, mask='auto')
 
+    # problem type ranking
+    for d in data:
+        if str(d["Name of Donor"]) == donor:
+            dnr = d
+            break
+
+    ptype = copy.deepcopy(problem_type)
+    for prob in ptype:
+        prob["score"] = dnr["Q22_" + prob["Code"]]
+
+    ptype = filter(lambda x: x["score"] != "", ptype) # get rid of no data
+
+    for prob in ptype:
+        prob["score"] = float(prob["score"])
+
+    ptype = sorted(ptype, key=lambda p: p["score"])
+
+    if len(ptype) != 0:
+        num = int(min(math.ceil(float(len(ptype)) / 2), 3))
+        top = [None] * num
+        bottom = [None] * num
+        for i in range(0, num):
+            top[i] = ptype[-1 * (i + 1)]
+            bottom[i] = ptype[i]
+
+        top_str = "More Influential<br/>"
+        bottom_str = "Less Influential<br/>"
+        for i, pt in enumerate(top):
+            top_str += "%d. " % (i + 1) + pt["ProblemTypeLong"] + " - " + "{0:.2f}".format(pt["score"]) + "<br/>"
+        for i, pt in enumerate(bottom):
+            bottom_str += "%d. " % (i + 1) + pt["ProblemTypeLong"] + " - " + "{0:.2f}".format(pt["score"]) + "<br/>"
+
+        print top_str
+        print bottom_str
+        print '=' * 50
+
+        pTop = Paragraph(top_str, getSampleStyleSheet()["Normal"])
+        pTop.wrapOn(canvas, 150, 400)
+        pTop.drawOn(canvas, 400, 400)
+
+        pBottom = Paragraph(bottom_str, getSampleStyleSheet()["Normal"])
+        pBottom.wrapOn(canvas, 150, 400)
+        pBottom.drawOn(canvas, 400, 270)
+
     return canvas
 
 
@@ -182,8 +243,11 @@ def writePdf(donor):
 
     c.save()
 
+writePdf(donor_dirs[0])
+'''
 jobs = []
 for donor in donor_dirs:
     p = Process(target=writePdf, args=(donor,))
     jobs.append(p)
     p.start()
+'''

@@ -42,27 +42,26 @@ function generateBarChartData(rawData) {
     var order = function(a, b) { return parseInt(a.q21) - parseInt(b.q21); };
     donorData.top5 = R.take(5, R.sort(order, q21Keys.map(function(key) {
       var countryCode = key.match(/C\d*$/)[0];
-      console.log(countryCode)
       var thisCountry =  getOrgByCode(countryKeys[countryCode]);
       var thisDonor = getOrgByCode(donorData.name.replace(/_/g, " "));
       var donor_id = donor['DID'];
       var thisDonor = getOrgByDID(donor_id);
       var oda  = 0;
+      /*
       if (thisDonor[0] === undefined || thisDonor[0].AidDataID.length == 0)
       {
         console.log("ERROR IN CROSSWALK: NEED TO FIND AIDDATA ID FOR "+donorData.name);
       }
       else
       {
-        console.log(thisDonor)
-        //this is messed up!! the fo is hardwired until the crosswalk has the proper info in it
+        // this is messed up!! the fo is hardwired until the crosswalk has the proper info in it
         var url = 'http://api.aiddata.org/flows/destination?fo='+thisDonor[0].AidDataDonorID+'&ro='+thisCountry[0].AidDataID+'&y=2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013';
         var res = request('GET', url);
         var oda_json = JSON.parse(res.getBody('utf8'));
         if (oda_json.item_count > 0)
             oda = oda_json.items[0].total;
-        console.log(oda)
       }
+      */
       return {
         countryName: countryKeys[countryCode],
         oda: oda,
