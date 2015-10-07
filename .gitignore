@@ -3,6 +3,7 @@ env
 charts
 donors/*
 node_modules/*
+.idea
 graphics
 charts
 parsed_data
