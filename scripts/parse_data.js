@@ -9,19 +9,25 @@ catch(e) {
   if (e.code !== 'EEXIST') throw e;
 }
 
-var dataCSV = fs.readFileSync(
-  path.join(__dirname, 'data/data.csv'), { encoding: 'utf-8' });
-var countryCSV = fs.readFileSync(
-  path.join(__dirname, 'data/country.csv'), { encoding: 'utf-8' });
-var aiddataIdCSV = fs.readFileSync(
-  path.join(__dirname, 'data/donor_recipient_id_crosswalk.csv'), { encoding: 'utf-8' });
-var averageCSV = fs.readFileSync(
-  path.join(__dirname, 'data/averages.csv'), { encoding: 'utf-8' });
+//var dataCSV = fs.readFileSync(
+//  path.join(__dirname, 'data/data.csv'), { encoding: 'utf-8' });
+//var countryCSV = fs.readFileSync(
+//  path.join(__dirname, 'data/country.csv'), { encoding: 'utf-8' });
+//var aiddataIdCSV = fs.readFileSync(
+//  path.join(__dirname, 'data/donor_recipient_id_crosswalk.csv'), { encoding: 'utf-8' });
+//var averageCSV = fs.readFileSync(
+//  path.join(__dirname, 'data/averages.csv'), { encoding: 'utf-8' });
+var dataCSV = read('data.csv');
+var countryCSV = read('country.csv');
+var aiddataIdCSV = read('donor_recipient_id_crosswalk.csv');
+var averageCSV = read('averages.csv');
+var problemTypeCSV = read('problem_type.csv');
 
 parse('data', dataCSV);
 parse('country', countryCSV);
 parse('crosswalk', aiddataIdCSV);
 parse('average', averageCSV);
+parse('problem_type', problemTypeCSV);
 
 function parse(fname, csv) {
   var data = fname === 'country' ? {} : [];
@@ -60,4 +66,8 @@ function parse(fname, csv) {
   dataCSVParser.write(csv);
   dataCSVParser.end();
 
+}
+
+function read(fname) {
+  return fs.readFileSync(path.join(__dirname, 'data', fname), { encoding: 'utf-8' });
 }

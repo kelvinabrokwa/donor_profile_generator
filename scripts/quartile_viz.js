@@ -166,7 +166,7 @@ function getChart(window, ranks) {
     .data(ranks.data)
     .enter()
     .append('text')
-      .text(ranks.donor.replace('_', ' '))
+      .text(ranks.donor.replace(/_/g, ' '))
       .attr('x', function(d) { return (d / numberOfDonors) * qAreaW + 15; })
       .attr('y', function(d, i) { return i * 40 * PX_RATIO + (markerH) + 5; });
 

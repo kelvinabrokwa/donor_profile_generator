@@ -37,7 +37,7 @@ for image in $dir/charts/*; do
   then
     cp $dir/assets/maps/$donor'_map.png' $dir/donors/$donor/map.png
   else
-    cp $dir/assets/images/placeholder.jpg $dir/donors/$donor/map.png
+    cp $dir/assets/images/map_placeholder.png $dir/donors/$donor/map.png
   fi
 
   if [ -e $dir'/charts/bar_chart_'$donor'.png' ];

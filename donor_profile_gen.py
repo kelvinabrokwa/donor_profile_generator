@@ -1,4 +1,8 @@
 import os
+import json
+import sys
+import copy
+import math
 
 from multiprocessing import Process
 from reportlab.pdfgen import canvas
@@ -8,6 +12,8 @@ from reportlab.lib import colors
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.pagesizes import letter
+from reportlab.platypus import Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 PAGEWIDTH, PAGEHEIGHT = letter
 
@@ -29,10 +35,17 @@ def drawMultiString( c, x, y, s ):
         y -= c._leading
     return c
 
+# read
+f = open(os.path.dirname(os.path.realpath(__file__)) + "/scripts/parsed_data/data.json", "r")
+data = json.load(f)
+
+f = open(os.path.dirname(os.path.realpath(__file__)) + "/scripts/parsed_data/problem_type.json", "r")
+problem_type = json.load(f)
+
 
 ################################
 # Function HeaderOverview - header for overview page
-def drawHeader(canvas, donor):
+def drawPdf(canvas, donor):
     donor_name = donor.replace('_', ' ')
 
     canvas.saveState()
@@ -121,38 +134,39 @@ def drawHeader(canvas, donor):
     canvas.drawImage(advicelegend, 450, 545,150,200, mask='auto')
 
     # add advice comp chart
-    canvas.setFont('Open Sans', 12)
     canvas.setFillColor(colors.black)
-    title_str = "Usefulness of " + donor_name + "'s Advice Compared to the Average"
-    textWidth = stringWidth(title_str, "Open Sans", 12)
-    pl = (PAGEWIDTH / 3) - (textWidth / 2)
-    canvas.drawString(pl, 500, title_str)
+    title_str = "<para align='center'>Usefulness of " + donor_name + "'s Advice Compared to the Average</para>"
     canvas.setFont('Open Sans', 6)
-    key_str1 = "All Other Development Partners"
-    canvas.drawString(pl+60,487, key_str1)
-    canvas.drawString(pl+210,487, donor_name)
+    comp_title_para = Paragraph(title_str, getSampleStyleSheet()["Normal"])
+    comp_title_para.wrapOn(canvas, 300, 200)
+    comp_title_para.drawOn(canvas, 30, 500)
+    legend_y = 487
+    stroke_length = 30
+    green_stroke_pos = 50
+    red_stroke_pos = 200
+    offset = 10
     canvas.setStrokeColorRGB(.461, .711, .340)
-    canvas.line(pl+30, 489, pl+50, 489)
+    canvas.line(green_stroke_pos, legend_y + 2, green_stroke_pos + stroke_length, legend_y + 2)
     canvas.setStrokeColorRGB(.890, .118, .118)
-    canvas.line(pl+180, 489, pl+200, 489)
+    canvas.line(red_stroke_pos, legend_y + 2, red_stroke_pos + stroke_length, legend_y + 2)
+    key_str1 = "All Other Development Partners"
+    canvas.drawString(green_stroke_pos + stroke_length + offset, legend_y, key_str1)
+    canvas.drawString(red_stroke_pos + stroke_length + offset , legend_y, donor_name)
     comp = ImageReader(compuri)
-    canvas.drawImage(comp, 45, 280, 225, 200, mask='auto')
+    comp_x = 85
+    comp_width = 175
+    comp_y = 280
+    comp_height = -80
+    canvas.drawImage(comp, comp_x, comp_y, comp_x + comp_width, comp_y + comp_height, mask='auto')
 
-    # add design reforms list
-
-    canvas.setFont('Open Sans', 12)
-    canvas.setFillColor(colors.black)
-    title_str = donor_name+ "'s Influence in Designing\nReforms for Different Problem Types"
-    pl = 400
-    canvas = drawMultiString(canvas, pl, 500, title_str)
 
     # add comp2 chart
-    canvas.setFont('Open Sans', 12)
-    canvas.setFillColor(colors.black)
-    title_str = "Three Dimensions of  " + donor_name + "'s Performance Compared to Other Development Partners"
-    textWidth = stringWidth(title_str, "Open Sans", 12)
-    pl = (PAGEWIDTH / 2) - (textWidth / 2)
-    canvas.drawString(pl, 250, title_str)
+    title_str = "<para align='center'>Three Dimensions of  " + \
+            donor_name + "'s Performance Compared to Other Development Partners</para>"
+    margin = 10
+    comp2_title_para = Paragraph(title_str, getSampleStyleSheet()["Normal"])
+    comp2_title_para.wrapOn(canvas, PAGEWIDTH - 2*margin, 200)
+    comp2_title_para.drawOn(canvas, margin, 250)
     comp2 = ImageReader(comp2uri)
     canvas.drawImage(comp2, 45, 110, 525, 125, mask='auto')
 
@@ -168,6 +182,60 @@ def drawHeader(canvas, donor):
     logo = ImageReader(logouri)
     canvas.drawImage(logo, 475, 20, 105, 65, mask='auto')
 
+    # problem type ranking
+    canvas.setFillColor(colors.black)
+    title_str = donor_name + "'s Influence in Designing\nReforms for Different Problem Types"
+    rank_title_para = Paragraph(title_str, getSampleStyleSheet()["Normal"])
+    rank_title_para.wrapOn(canvas, 180, 100)
+    rank_title_para.drawOn(canvas, 400, 490)
+
+    for d in data:
+        if str(d["Name of Donor"]) == donor:
+            dnr = d
+            break
+
+    ptype = copy.deepcopy(problem_type)
+    for prob in ptype:
+        prob["score"] = dnr["Q22_" + prob["Code"]]
+
+    ptype = filter(lambda x: x["score"] != "", ptype) # get rid of no data
+
+    for prob in ptype:
+        prob["score"] = float(prob["score"])
+
+    ptype = sorted(ptype, key=lambda p: p["score"])
+
+    if len(ptype) != 0:
+        num = int(min(math.ceil(float(len(ptype)) / 2), 3))
+        top = [None] * num
+        bottom = [None] * num
+        for i in range(0, num):
+            top[i] = ptype[-1 * (i + 1)]
+            bottom[i] = ptype[i]
+
+        top_str = """
+            <font color='green' size=12><b>More Influential</b></font><br/>
+        """
+        bottom_str = """
+            <font color='red' size=12><b>Less Influential</b></font><br/>
+        """
+        for i, pt in enumerate(top):
+            top_str += "<font color='green' fontName='Open Sans' size=8>" + \
+                "%d. " % (i + 1) + pt["ProblemTypeLong"] + "({0:.2f})".format(pt["score"]) + "<br/>" + \
+            "</font>"
+        for i, pt in enumerate(bottom):
+            bottom_str += "<font color='red' fontname='Open Sans' size=8>" + \
+                "%d. " % (i + 1) + pt["ProblemTypeLong"] + "({0:.2f})".format(pt["score"]) + "<br/>" + \
+            "</font>"
+
+        pTop = Paragraph(top_str, getSampleStyleSheet()["Normal"])
+        pTop.wrapOn(canvas, 150, 400)
+        pTop.drawOn(canvas, 400, 400)
+
+        pBottom = Paragraph(bottom_str, getSampleStyleSheet()["Normal"])
+        pBottom.wrapOn(canvas, 150, 400)
+        pBottom.drawOn(canvas, 400, 290)
+
     return canvas
 
 
@@ -178,7 +246,7 @@ def writePdf(donor):
     c.setLineWidth(.3)
     c.setFont('Open Sans', 12)
 
-    c = drawHeader(c, donor)
+    c = drawPdf(c, donor)
 
     c.save()
 
