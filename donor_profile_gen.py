@@ -250,11 +250,8 @@ def writePdf(donor):
 
     c.save()
 
-writePdf(donor_dirs[0])
-'''
 jobs = []
 for donor in donor_dirs:
     p = Process(target=writePdf, args=(donor,))
     jobs.append(p)
     p.start()
-'''
