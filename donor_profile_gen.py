@@ -91,7 +91,7 @@ def drawPdf(canvas, donor):
 
     # add logo
     logo = ImageReader(logouri)
-    canvas.drawImage(logo, 30, 700, 120, 68, mask='auto')
+    canvas.drawImage(logo, 30, 700, 120, 68,preserveAspectRatio=True, mask='auto')
 
 
     # add map
@@ -180,7 +180,7 @@ def drawPdf(canvas, donor):
 
     # add logo
     logo = ImageReader(logouri)
-    canvas.drawImage(logo, 475, 20, 105, 65, mask='auto')
+    canvas.drawImage(logo, 475, 18, 120, 68, preserveAspectRatio=True, mask='auto')
 
     # problem type ranking
     canvas.setFillColor(colors.black)
@@ -221,11 +221,11 @@ def drawPdf(canvas, donor):
         """
         for i, pt in enumerate(top):
             top_str += "<font color='green' fontName='Open Sans' size=8>" + \
-                "%d. " % (i + 1) + pt["ProblemTypeLong"] + "({0:.2f})".format(pt["score"]) + "<br/>" + \
+                "%d. " % (i + 1) + pt["ProblemTypeLong"] + " ({0:.2f})".format(pt["score"]) + "<br/>" + \
             "</font>"
         for i, pt in enumerate(bottom):
             bottom_str += "<font color='red' fontname='Open Sans' size=8>" + \
-                "%d. " % (i + 1) + pt["ProblemTypeLong"] + "({0:.2f})".format(pt["score"]) + "<br/>" + \
+                "%d. " % (i + 1) + pt["ProblemTypeLong"] + " ({0:.2f})".format(pt["score"]) + "<br/>" + \
             "</font>"
 
         pTop = Paragraph(top_str, getSampleStyleSheet()["Normal"])
