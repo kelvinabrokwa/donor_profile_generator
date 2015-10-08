@@ -62,7 +62,7 @@ function formatData(data) {
       pgc3: data[i]['Q14_PGC3']
     };
     output.push({
-      donor: data[i]['Name of Donor'],
+      donor: data[i]['NameofDonor'],
       data: donor,
       average: average
     });

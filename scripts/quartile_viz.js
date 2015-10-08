@@ -12,7 +12,7 @@ writeChartsToDisk(chartData);
 function generateChartData(csv) {
   return csv.map(function(d) {
     return {
-      donor: d['Name of Donor'],
+      donor: d['NameofDonor'],
       data: [
         +d['Q21_Rank'] || 62,
         +d['Q25_Rank'] || 62,

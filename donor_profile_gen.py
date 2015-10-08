@@ -190,7 +190,7 @@ def drawPdf(canvas, donor):
     rank_title_para.drawOn(canvas, 400, 490)
 
     for d in data:
-        if str(d["Name of Donor"]) == donor:
+        if str(d["NameofDonor"]) == donor:
             dnr = d
             break
 

@@ -3,37 +3,38 @@ var path = require('path');
 var jsdom = require('jsdom');
 var R = require('ramda');
 var xmlserializer = require('xmlserializer');
-var request = require('sync-request');
-var zlib = require('zlib');
+//var request = require('sync-request');
+//var zlib = require('zlib');
 
 
 var data = JSON.parse(fs.readFileSync(
       path.join(__dirname, 'parsed_data', 'data.json'), { encoding: 'utf-8' }));
 var countryKeys = JSON.parse(fs.readFileSync(
       path.join(__dirname, 'parsed_data', 'country.json'), { encoding: 'utf-8' }));
-var crosswalk = JSON.parse(fs.readFileSync(
-      path.join(__dirname, 'parsed_data', 'crosswalk.json'), { encoding: 'utf-8' }));
+//var crosswalk = JSON.parse(fs.readFileSync(
+//      path.join(__dirname, 'parsed_data', 'crosswalk.json'), { encoding: 'utf-8' }));
 
 generateBarChartData(data);
 
+/*
 function getOrgByCode(code) {
   return crosswalk.filter(
-      function(crosswalk){return crosswalk.CountryShort == code}
+      function(cw){ return cw.CountryShort === code; }
   );
 }
 
 function getOrgByDID(id) {
   return crosswalk.filter(
-      function(crosswalk){return crosswalk.DID == id}
+      function(cw){ return cw.DID === id; }
   );
 }
-
+*/
 function generateBarChartData(rawData) {
   var barData = rawData.map(function(donor) {
 
     var donorData = {};
 
-    donorData.name = donor['Name of Donor'];
+    donorData.name = donor['NameofDonor'];
 
     var q21Keys = Object.keys(donor).filter(function(key) {
       return key.indexOf('Q21_C') > -1;
@@ -42,11 +43,11 @@ function generateBarChartData(rawData) {
     var order = function(a, b) { return parseInt(a.q21) - parseInt(b.q21); };
     donorData.top5 = R.take(5, R.sort(order, q21Keys.map(function(key) {
       var countryCode = key.match(/C\d*$/)[0];
-      var thisCountry =  getOrgByCode(countryKeys[countryCode]);
-      var thisDonor = getOrgByCode(donorData.name.replace(/_/g, " "));
-      var donor_id = donor['DID'];
-      var thisDonor = getOrgByDID(donor_id);
-      var oda  = 0;
+      //var thisCountry =  getOrgByCode(countryKeys[countryCode]);
+      //var thisDonor = getOrgByCode(donorData.name.replace(/_/g, " "));
+      //var donor_id = donor['DID'];
+      //var thisDonor = getOrgByDID(donor_id);
+      var oda = 0;
       /*
       if (thisDonor[0] === undefined || thisDonor[0].AidDataID.length == 0)
       {
