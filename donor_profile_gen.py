@@ -181,7 +181,19 @@ def drawPdf(canvas, donor):
     # add logo
     logo = ImageReader(logouri)
     canvas.drawImage(logo, 475, 18, 120, 68, preserveAspectRatio=True, mask='auto')
+    
+    #add footer info
+    datastr1 = "<font color='white' fontName='Open Sans' size=6>hello</font>"
+    pData1 = Paragraph(datastr1, getSampleStyleSheet()["Normal"])
+    pData1.wrapOn(canvas, 150, 20)
+    pData1.drawOn(canvas, 25, 70)
+    
+    datastr2 = "<font color='white' fontName='Open Sans' size=6>hello2</font>"
+    pData2 = Paragraph(datastr2, getSampleStyleSheet()["Normal"])
+    pData2.wrapOn(canvas, 150, 20)
+    pData2.drawOn(canvas, 180, 70)
 
+    
     # problem type ranking
     canvas.setFillColor(colors.black)
     title_str = donor_name + "'s Influence in Designing\nReforms for Different Problem Types"
@@ -189,6 +201,8 @@ def drawPdf(canvas, donor):
     rank_title_para.wrapOn(canvas, 180, 100)
     rank_title_para.drawOn(canvas, 400, 490)
 
+	#set dnr to first element, and find the correct one
+    dnr = data[0]
     for d in data:
         if str(d["NameofDonor"]) == donor:
             dnr = d
