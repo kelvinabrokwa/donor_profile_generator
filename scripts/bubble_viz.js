@@ -75,11 +75,11 @@ function generateBubbleChartData(rawData, averageData) {
   for (var i = 0; i < rawData.length; i++) {
     name = rawData[i]['NameofDonor'];
     if (rawData[i]['Multilateral'])
-      type = 'multi';
+      type = 'Multilateral';
     else if (rawData[i]['DACBilateral'])
-      type = 'dac';
+      type = 'DAC';
     else
-      type = 'nonDac';
+      type = 'Non-DAC';
     obj = {};
     obj[name] = {
       pgc1: {

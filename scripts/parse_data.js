@@ -22,12 +22,14 @@ var countryCSV = read('country.csv');
 var aiddataIdCSV = read('donor_recipient_id_crosswalk.csv');
 var averageCSV = read('averages.csv');
 var problemTypeCSV = read('problem_type.csv');
+var policyAreaCSV = read('policy_area.csv');
 
 parse('data', dataCSV);
 parse('country', countryCSV);
 parse('crosswalk', aiddataIdCSV);
 parse('average', averageCSV);
 parse('problem_type', problemTypeCSV);
+parse('policy_area', policyAreaCSV);
 
 function parse(fname, csv) {
   var data = fname === 'country' ? {} : [];
