@@ -8,12 +8,25 @@ var data = JSON.parse(fs.readFileSync(
       path.join(__dirname, 'parsed_data', 'data.json'), { encoding: 'utf-8' }));
 var averages = JSON.parse(fs.readFileSync(
       path.join(__dirname, 'parsed_data', 'average.json'), { encoding: 'utf-8' }));
+var donorcw = JSON.parse(fs.readFileSync(
+      path.join(__dirname, 'parsed_data', 'crosswalk.json'), { encoding: 'utf-8' }));
 
 
 var bubbleData = generateBubbleChartData(data, averages);
 
 writeChartsToDisk(bubbleData);
 
+function findAidDataID(cw, oid)
+{
+	for (var i = 0; i < cw.length; i++) 
+	{
+		if (cw[i]['DID'] == oid) 
+		{
+			return cw[i]['AidDataID']
+		}
+	}
+	return -1
+}
 
 function generateBubbleChartData(rawData, averageData) {
   var averageBubbleData = {
@@ -73,6 +86,9 @@ function generateBubbleChartData(rawData, averageData) {
   var allBubbleData = [];
   var obj, name, type;
   for (var i = 0; i < rawData.length; i++) {
+  	oid = rawData[i]['DID'];
+  	adid = findAidDataID(donorcw, oid);
+  	console.log(oid+">>"+adid)
     name = rawData[i]['NameofDonor'];
     if (rawData[i]['Multilateral'])
       type = 'Multilateral';
