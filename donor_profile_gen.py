@@ -135,10 +135,10 @@ def drawPdf(canvas, donor):
 
     # add advice comp chart
     canvas.setFillColor(colors.black)
-    title_str = "<para align='center'>Usefulness of " + donor_name + "'s Advice Compared to the Average</para>"
+    title_str = "<para align='center'><font color='black' fontName='Open Sans' size=12>Usefulness of " + donor_name + "'s Advice Compared to the Average</font></para>"
     canvas.setFont('Open Sans', 6)
     comp_title_para = Paragraph(title_str, getSampleStyleSheet()["Normal"])
-    comp_title_para.wrapOn(canvas, 300, 200)
+    comp_title_para.wrapOn(canvas, 320, 200)
     comp_title_para.drawOn(canvas, 30, 500)
     legend_y = 487
     stroke_length = 30
@@ -161,8 +161,8 @@ def drawPdf(canvas, donor):
 
 
     # add comp2 chart
-    title_str = "<para align='center'>Three Dimensions of  " + \
-            donor_name + "'s Performance Compared to Other Development Partners</para>"
+    title_str = "<para align='center'><font color='black' fontName='Open Sans' size=12>Three Dimensions of  " + \
+            donor_name + "'s Performance Compared to Other Development Partners</font></para>"
     margin = 10
     comp2_title_para = Paragraph(title_str, getSampleStyleSheet()["Normal"])
     comp2_title_para.wrapOn(canvas, PAGEWIDTH - 2*margin, 200)
@@ -210,10 +210,10 @@ def drawPdf(canvas, donor):
     
     # problem type ranking
     canvas.setFillColor(colors.black)
-    title_str = donor_name + "'s Influence in Designing\nReforms for Different Problem Types"
+    title_str = "<font color='black' fontName='Open Sans' size=12>"+ donor_name + "'s Influence in Designing\nReforms for Different Problem Types</font>"
     rank_title_para = Paragraph(title_str, getSampleStyleSheet()["Normal"])
-    rank_title_para.wrapOn(canvas, 180, 100)
-    rank_title_para.drawOn(canvas, 390, 490)
+    rank_title_para.wrapOn(canvas, 190, 100)
+    rank_title_para.drawOn(canvas, 380, 490)
 
 	#set dnr to first element, and find the correct one
     dnr = data[0]
@@ -257,12 +257,12 @@ def drawPdf(canvas, donor):
             "</font>"
 
         pTop = Paragraph(top_str, getSampleStyleSheet()["Normal"])
-        pTop.wrapOn(canvas, 150, 400)
-        pTop.drawOn(canvas, 390, 380)
+        pTop.wrapOn(canvas, 160, 400)
+        pTop.drawOn(canvas, 380, 380)
 
         pBottom = Paragraph(bottom_str, getSampleStyleSheet()["Normal"])
-        pBottom.wrapOn(canvas, 150, 400)
-        pBottom.drawOn(canvas, 390, 290)
+        pBottom.wrapOn(canvas, 160, 400)
+        pBottom.drawOn(canvas, 380, 280)
 
     return canvas
 

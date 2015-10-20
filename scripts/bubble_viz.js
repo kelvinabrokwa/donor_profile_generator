@@ -88,7 +88,6 @@ function generateBubbleChartData(rawData, averageData) {
   for (var i = 0; i < rawData.length; i++) {
   	oid = rawData[i]['DID'];
   	adid = findAidDataID(donorcw, oid);
-  	console.log(oid+">>"+adid)
     name = rawData[i]['NameofDonor'];
     if (rawData[i]['Multilateral'])
       type = 'Multilateral';
