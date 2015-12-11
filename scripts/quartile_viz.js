@@ -106,8 +106,8 @@ function getChart(window, ranks) {
     .enter()
     .append('text')
       .text(function(d) { return d; })
-      .attr('x', 10)
-      .attr('y', function(d, i) { return i * 45 * PX_RATIO; })
+      .attr('x', 50)
+      .attr('y', function(d, i) { return (i * 55)+5; })
       .call(wrap);
 
 
@@ -121,7 +121,7 @@ function getChart(window, ranks) {
       .attr('x', function(d, i) {
         switch (i) {
           case 0:
-            return 0;
+            return 10;
           case 1:
             return qAreaW / 2;
           case 2:
@@ -171,8 +171,8 @@ function getChart(window, ranks) {
       .attr('y', function(d, i) { return i * 40 * PX_RATIO + (markerH) + 5; });
 
   svg.selectAll('text')
-    .style('font-family', 'Open Sans, sans-serif')
-    .style('font-size', '14');
+    .style('font-family', 'Open Sans')
+    .style('font-size', '10');
 
   function translation(x, y) {
     return 'translate(' + (x * PX_RATIO) + ',' + (y * PX_RATIO) + ')';
